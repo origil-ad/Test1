@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading;
 using CinemaCity.Core;
+using Infrastructure.Extensions;
 using OpenQA.Selenium;
 
 namespace Infrastructure.Pages
@@ -105,20 +106,5 @@ namespace Infrastructure.Pages
         }
     }
 
-    public static class Extensions
-    {
-        public static bool TryFindElement(this IWebElement mainElement, By by, out IWebElement element)
-        {
-            try
-            {
-                element = mainElement.FindElement(by);
-            }
-            catch (NoSuchElementException)
-            {
-                element = null;
-                return false;
-            }
-            return true;
-        }
-    }
+   
 }

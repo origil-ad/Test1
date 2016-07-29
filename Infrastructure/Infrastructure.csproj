@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Elements\SelectMenu.cs" />
+    <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Pages\CinemaCityMainPage.cs" />
     <Compile Include="Pages\DealsPage.cs" />
     <Compile Include="Pages\PaymentPage.cs" />
