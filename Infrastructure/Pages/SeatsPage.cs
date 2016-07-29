@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using CinemaCity.Core;
 using OpenQA.Selenium;
 
@@ -54,13 +55,9 @@ namespace Infrastructure.Pages
                         isSeatsChosen = false;
                     }
                 }
-
                 else
                 {
-                    if (!ChooseSeat(row, seat, _configuration.GetChosenSeatCode()))
-                    {
-                        isSeatsChosen = false;
-                    }
+                    ChooseSeat(row, seat, _configuration.GetChosenSeatCode());
                 }
             }
             return isSeatsChosen;
@@ -69,29 +66,35 @@ namespace Infrastructure.Pages
         private bool ChooseSeat(string row, string seat, string desirableSeatCode)
         {
             IWebElement seatElement;
-            var isSeatExist = _mainElement.TryFindElement(By.Id(string.Format("_Seat_{0}_{1}", row, seat)), out seatElement);
+            bool isSeatExist = _mainElement.TryFindElement(By.Id(string.Format("_Seat_{0}_{1}", row, seat)), out seatElement);
 
-            if (isSeatExist)
+            if (!isSeatExist)
             {
                 return false;
             }
 
-            string style = seatElement.GetAttribute("style");
+            string seatCode = GetSeatCode(seatElement);
 
-            style = style.Remove(style.Length - 3);
-
-            if (style.EndsWith(_configuration.GetTakenSeatCode()))
+            if (seatCode.Equals(_configuration.GetTakenSeatCode()))
             {
-                return false;
+                return false; //TODO return FindBestClosetSeat
             }
 
-            if (style.EndsWith(desirableSeatCode))
+            if (seatCode.Equals(desirableSeatCode))
             {
                 seatElement.Click();
+                //TODO: check if seat turn as wanted
             }
 
             Thread.Sleep(300);
             return true;
+        }
+
+        private string GetSeatCode(IWebElement seatElement)
+        {
+            string style = seatElement.GetAttribute("style");
+            style = style.Remove(style.Length - 3);
+            return style.Last().ToString();
         }
 
         private DealsPage Submit()
